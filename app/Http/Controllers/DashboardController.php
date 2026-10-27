@@ -84,21 +84,26 @@ class DashboardController extends Controller
                 'date' => $loopDate->toDateString(),
                 'day_name' => $dayNames[$loopDate->dayOfWeek],
                 'revenue' => $revenue,
-                'revenue_k' => 'Rp ' . round($revenue / 1000) . 'k',
+                'revenue_k' => 'Rp '.round($revenue / 1000).'k',
                 'is_today' => ($i === 0),
             ];
         }
 
-        // 6. Breakdown Porsi Menu Terjual Hari Ini
+        // 6. Breakdown Porsi Menu Terjual
         $menuBreakdown = [];
         $menus = Menu::where('is_aktif', true)->get();
+        $totalSemuaPorsi = (int) Penjualan::sum('jumlah');
 
         foreach ($menus as $m) {
-            $qty = (int) Penjualan::whereDate('tanggal', $effectiveDateStr)
+            $qtyHariIni = (int) Penjualan::whereDate('tanggal', $effectiveDateStr)
                 ->where('menu_id', $m->id)
                 ->sum('jumlah');
 
-            $pct = $porsiTerjual > 0 ? round(($qty / $porsiTerjual) * 100) : 0;
+            $qtyTotal = (int) Penjualan::where('menu_id', $m->id)->sum('jumlah');
+
+            $qty = $porsiTerjual > 0 ? $qtyHariIni : $qtyTotal;
+            $basis = $porsiTerjual > 0 ? $porsiTerjual : ($totalSemuaPorsi > 0 ? $totalSemuaPorsi : 1);
+            $pct = round(($qty / $basis) * 100);
 
             $menuBreakdown[] = [
                 'nama' => $m->nama_menu,
@@ -107,9 +112,8 @@ class DashboardController extends Controller
             ];
         }
 
-        // 7. Transaksi Penjualan Terkini (5 transaksi terbaru)
+        // 7. Transaksi Penjualan Terkini (5 transaksi terbaru masuk ke database)
         $transaksiTerkini = Penjualan::with('menu')
-            ->whereDate('tanggal', $effectiveDateStr)
             ->latest('id')
             ->take(5)
             ->get();

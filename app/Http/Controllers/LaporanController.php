@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Penjualan;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -16,8 +17,9 @@ class LaporanController extends Controller
      */
     public function index(Request $request): View
     {
-        $periode = $request->query('periode', 'harian');
-        $dateParam = $request->query('tanggal', '27/09/2026');
+        $defaultDate = Carbon::today()->format('d/m/Y');
+        $periode = $request->query('periode', 'semua');
+        $dateParam = $request->query('tanggal', $defaultDate);
 
         $queryResult = $this->queryPenjualan($periode, $dateParam);
 
@@ -35,8 +37,9 @@ class LaporanController extends Controller
      */
     public function getData(Request $request): JsonResponse
     {
-        $periode = $request->query('periode', 'harian');
-        $dateParam = $request->query('tanggal', '27/09/2026');
+        $defaultDate = Carbon::today()->format('d/m/Y');
+        $periode = $request->query('periode', 'semua');
+        $dateParam = $request->query('tanggal', $defaultDate);
 
         $queryResult = $this->queryPenjualan($periode, $dateParam);
 
@@ -47,7 +50,7 @@ class LaporanController extends Controller
                 'nama_menu' => $item->menu->nama_menu ?? $item->nama_menu ?? 'Es Teler',
                 'jumlah' => $item->jumlah,
                 'total_harga' => $item->total_harga,
-                'total_harga_formatted' => 'Rp ' . number_format($item->total_harga, 0, ',', '.'),
+                'total_harga_formatted' => 'Rp '.number_format($item->total_harga, 0, ',', '.'),
                 'status' => $item->status,
             ];
         });
@@ -57,7 +60,7 @@ class LaporanController extends Controller
             'periode' => $periode,
             'tanggal' => $dateParam,
             'totalPendapatan' => $queryResult['totalPendapatan'],
-            'totalPendapatanFormatted' => 'Rp ' . number_format($queryResult['totalPendapatan'], 0, ',', '.'),
+            'totalPendapatanFormatted' => 'Rp '.number_format($queryResult['totalPendapatan'], 0, ',', '.'),
             'totalPorsi' => $queryResult['totalPorsi'],
             'data' => $formattedData,
         ]);
@@ -68,18 +71,19 @@ class LaporanController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
-        $periode = $request->query('periode', 'harian');
-        $dateParam = $request->query('tanggal', '27/09/2026');
+        $defaultDate = Carbon::today()->format('d/m/Y');
+        $periode = $request->query('periode', 'semua');
+        $dateParam = $request->query('tanggal', $defaultDate);
 
         $queryResult = $this->queryPenjualan($periode, $dateParam);
         $records = $queryResult['data'];
 
-        $filename = 'laporan-penjualan-' . $periode . '-' . date('Ymd-His') . '.csv';
+        $filename = 'laporan-penjualan-'.$periode.'-'.date('Ymd-His').'.csv';
 
         return response()->streamDownload(function () use ($records) {
             $handle = fopen('php://output', 'w');
             // Menambahkan BOM untuk UTF-8 pada Excel
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             fputcsv($handle, ['No', 'Nomor Transaksi', 'Tanggal', 'Nama Menu', 'Jumlah Porsi', 'Harga Satuan', 'Total Harga', 'Status']);
 
@@ -105,33 +109,30 @@ class LaporanController extends Controller
     /**
      * Query data penjualan berdasarkan periode dan tanggal.
      *
-     * @return array{data: \Illuminate\Database\Eloquent\Collection, totalPendapatan: int, totalPorsi: int}
+     * @return array{data: Collection, totalPendapatan: int, totalPorsi: int}
      */
     private function queryPenjualan(string $periode, string $dateParam): array
     {
-        $date = $this->parseDateString($dateParam);
+        $query = Penjualan::with('menu')->latest('tanggal')->latest('id');
 
-        $query = Penjualan::with('menu')->orderBy('tanggal')->orderBy('id');
-
-        if ($periode === 'mingguan') {
-            $startOfWeek = $date->copy()->startOfWeek();
-            $endOfWeek = $date->copy()->endOfWeek();
-            $query->whereBetween('tanggal', [$startOfWeek->toDateString(), $endOfWeek->toDateString()]);
-        } elseif ($periode === 'bulanan') {
-            $query->whereYear('tanggal', $date->year)->whereMonth('tanggal', $date->month);
+        if ($periode === 'semua') {
+            // Tampilkan semua data riwayat penjualan tanpa batasan tanggal
+            $data = $query->get();
         } else {
-            // Harian (default)
-            $query->whereDate('tanggal', $date->toDateString());
-        }
+            $date = $this->parseDateString($dateParam);
 
-        $data = $query->get();
-
-        // Jika data pada tanggal spesifik kosong, ambil data terdekat agar laporan tetap terisi rapi
-        if ($data->isEmpty()) {
-            $latestSales = Penjualan::with('menu')->latest('tanggal')->take(5)->get();
-            if ($latestSales->isNotEmpty()) {
-                $data = $latestSales;
+            if ($periode === 'mingguan') {
+                $startOfWeek = $date->copy()->startOfWeek();
+                $endOfWeek = $date->copy()->endOfWeek();
+                $query->whereBetween('tanggal', [$startOfWeek->toDateString(), $endOfWeek->toDateString()]);
+            } elseif ($periode === 'bulanan') {
+                $query->whereYear('tanggal', $date->year)->whereMonth('tanggal', $date->month);
+            } else {
+                // Harian
+                $query->whereDate('tanggal', $date->toDateString());
             }
+
+            $data = $query->get();
         }
 
         $totalPendapatan = (int) $data->sum('total_harga');

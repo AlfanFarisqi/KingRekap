@@ -43,15 +43,15 @@
                     </div>
                 </div>
                 <div class="text-2xl font-extrabold text-[#0c3b2e] tracking-tight">
-                    Rp 1.348.000
+                    Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                <span class="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[11px]">
+                <span class="inline-flex items-center gap-1 font-bold {{ $isPositive ? 'text-emerald-700 bg-emerald-50 border-emerald-200/60' : 'text-red-600 bg-red-50 border-red-200/60' }} px-2 py-0.5 rounded-md border text-[11px]">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ $isPositive ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6' }}"/>
                     </svg>
-                    <span>+14.2%</span>
+                    <span>{{ $isPositive ? '+' : '-' }}{{ $percentChange }}%</span>
                 </span>
                 <span class="text-gray-400 text-[11px] font-medium">dari kemarin</span>
             </div>
@@ -69,14 +69,14 @@
                     </div>
                 </div>
                 <div class="text-2xl font-extrabold text-gray-900 tracking-tight">
-                    41 Porsi
+                    {{ $porsiTerjual }} Porsi
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between gap-2 text-xs">
                 <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
-                    <div class="bg-blue-600 h-2 rounded-full" style="width: 82%"></div>
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $targetPercent }}%"></div>
                 </div>
-                <span class="text-[11px] font-bold text-gray-700 shrink-0">82% <span class="text-gray-400 font-normal">Target (50 Porsi)</span></span>
+                <span class="text-[11px] font-bold text-gray-700 shrink-0">{{ $targetPercent }}% <span class="text-gray-400 font-normal">Target ({{ $targetPorsi }} Porsi)</span></span>
             </div>
         </div>
 
@@ -91,12 +91,12 @@
                         </svg>
                     </div>
                 </div>
-                <div class="text-xl sm:text-[22px] font-extrabold text-gray-900 truncate tracking-tight" title="Es Teler Keju Spesial">
-                    Es Teler Keju Spesial
+                <div class="text-xl sm:text-[22px] font-extrabold text-gray-900 truncate tracking-tight" title="{{ $topMenuName }}">
+                    {{ $topMenuName }}
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                <span class="text-gray-500 font-medium text-[11px]">12 porsi laku</span>
+                <span class="text-gray-500 font-medium text-[11px]">{{ $topMenuSold }} porsi laku</span>
                 <span class="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md text-[11px] border border-amber-200/60">Top #1</span>
             </div>
         </div>
@@ -113,7 +113,7 @@
                     </div>
                 </div>
                 <div class="text-2xl font-extrabold text-gray-900 tracking-tight">
-                    55 Cup
+                    {{ $prediksiBesokCup }} Cup
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
@@ -190,12 +190,12 @@
 
                 <!-- Days X-Axis labels -->
                 <div class="flex justify-between items-center text-xs font-semibold text-gray-500 pt-3 border-t border-gray-100">
-                    <span class="text-center">Sen<br><span class="text-[11px] font-normal text-gray-400">Rp 820k</span></span>
-                    <span class="text-center">Sel<br><span class="text-[11px] font-normal text-gray-400">Rp 950k</span></span>
-                    <span class="text-center">Rab<br><span class="text-[11px] font-normal text-gray-400">Rp 1.050k</span></span>
-                    <span class="text-center">Kam<br><span class="text-[11px] font-normal text-gray-400">Rp 980k</span></span>
-                    <span class="text-center">Jum<br><span class="text-[11px] font-normal text-gray-400">Rp 1.210k</span></span>
-                    <span class="text-center font-bold text-[#0c3b2e]">Sabtu<br><span class="text-[11px] font-bold text-emerald-700">Rp 1.348k</span></span>
+                    @foreach($trendDays as $td)
+                        <span class="text-center {{ $td['is_today'] ? 'font-bold text-[#0c3b2e]' : '' }}">
+                            {{ $td['day_name'] }}<br>
+                            <span class="text-[11px] {{ $td['is_today'] ? 'font-bold text-emerald-700' : 'font-normal text-gray-400' }}">{{ $td['revenue_k'] }}</span>
+                        </span>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -206,47 +206,28 @@
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-base sm:text-lg font-bold text-[#0c3b2e]">Porsi Menu Terjual</h2>
-                        <p class="text-xs text-gray-500 mt-0.5">Persentase varian King Es Teler yang terjual hari ini</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Persentase varian King Es Teler yang terjual</p>
                     </div>
                     <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 shrink-0">
-                        Total 41 Porsi
+                        Total {{ $porsiTerjual }} Porsi
                     </span>
                 </div>
 
-                <!-- List with progress bars: 3 Varian Resmi -->
+                <!-- List with progress bars -->
                 <div class="space-y-4 pt-2">
-                    <!-- Varian 1: Es Teler Keju Spesial -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-gray-800">Es Teler Keju Spesial</span>
-                            <span class="text-[#0c3b2e]">17 Porsi <span class="text-gray-400 font-semibold">(41%)</span></span>
+                    @forelse($menuBreakdown as $idx => $mb)
+                        <div>
+                            <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                                <span class="text-gray-800">{{ $mb['nama'] }}</span>
+                                <span class="text-[#0c3b2e]">{{ $mb['porsi'] }} Porsi <span class="text-gray-400 font-semibold">({{ $mb['persen'] }}%)</span></span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="h-2.5 rounded-full {{ $idx % 3 === 0 ? 'bg-[#0c3b2e]' : ($idx % 3 === 1 ? 'bg-blue-600' : 'bg-emerald-600') }}" style="width: {{ $mb['persen'] }}%"></div>
+                            </div>
                         </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                            <div class="bg-[#0c3b2e] h-2.5 rounded-full" style="width: 41%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Varian 2: Es Teler Original -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-gray-800">Es Teler Original</span>
-                            <span class="text-blue-700">14 Porsi <span class="text-gray-400 font-semibold">(34%)</span></span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: 34%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Varian 3: Es Teler Keju -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-gray-800">Es Teler Keju</span>
-                            <span class="text-emerald-700">10 Porsi <span class="text-gray-400 font-semibold">(25%)</span></span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                            <div class="bg-emerald-600 h-2.5 rounded-full" style="width: 25%"></div>
-                        </div>
-                    </div>
+                    @empty
+                        <p class="text-xs text-gray-500 py-4 text-center">Belum ada varian menu.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -258,11 +239,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
             <div>
                 <h2 class="text-lg font-bold text-[#0c3b2e]">Transaksi Penjualan Terkini</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Data rekap pesanan terbaru King Es Teler hari ini</p>
+                <p class="text-xs text-gray-500 mt-0.5">Data rekap 5 transaksi pesanan terbaru King Es Teler</p>
             </div>
-            <a href="{{ route('laporan.index') }}" 
+            <a href="{{ route('penjualan.index') }}" 
                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-[#0c3b2e] bg-emerald-50 hover:bg-emerald-100 transition-colors self-start sm:self-auto">
-                <span>Lihat Laporan Lengkap</span>
+                <span>Lihat Semua Penjualan</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
@@ -275,58 +256,31 @@
                 <thead>
                     <tr class="bg-gray-50/80 text-gray-500 text-xs font-bold border-b border-gray-200 uppercase tracking-wider">
                         <th class="py-3.5 px-5 text-center w-16">No</th>
-                        <th class="py-3.5 px-6">Menu</th>
+                        <th class="py-3.5 px-6">Menu &amp; Tanggal</th>
                         <th class="py-3.5 px-6 text-center">Jumlah</th>
                         <th class="py-3.5 px-6 text-right">Total</th>
                         <th class="py-3.5 px-5 text-center w-28">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-gray-700">
-                    <tr class="hover:bg-gray-50/70 transition-colors">
-                        <td class="py-3.5 px-5 text-center font-bold text-gray-500">1</td>
-                        <td class="py-3.5 px-6 font-bold text-gray-900">Es Teler Keju Spesial</td>
-                        <td class="py-3.5 px-6 text-center font-semibold text-gray-800">12 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp 144.000</td>
-                        <td class="py-3.5 px-5 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">Selesai</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/70 transition-colors">
-                        <td class="py-3.5 px-5 text-center font-bold text-gray-500">2</td>
-                        <td class="py-3.5 px-6 font-bold text-gray-900">Es Teler Original</td>
-                        <td class="py-3.5 px-6 text-center font-semibold text-gray-800">8 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp 64.000</td>
-                        <td class="py-3.5 px-5 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">Selesai</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/70 transition-colors">
-                        <td class="py-3.5 px-5 text-center font-bold text-gray-500">3</td>
-                        <td class="py-3.5 px-6 font-bold text-gray-900">Es Teler Keju</td>
-                        <td class="py-3.5 px-6 text-center font-semibold text-gray-800">10 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp 100.000</td>
-                        <td class="py-3.5 px-5 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">Selesai</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/70 transition-colors">
-                        <td class="py-3.5 px-5 text-center font-bold text-gray-500">4</td>
-                        <td class="py-3.5 px-6 font-bold text-gray-900">Es Teler Keju Spesial</td>
-                        <td class="py-3.5 px-6 text-center font-semibold text-gray-800">5 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp 60.000</td>
-                        <td class="py-3.5 px-5 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">Selesai</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/70 transition-colors">
-                        <td class="py-3.5 px-5 text-center font-bold text-gray-500">5</td>
-                        <td class="py-3.5 px-6 font-bold text-gray-900">Es Teler Original</td>
-                        <td class="py-3.5 px-6 text-center font-semibold text-gray-800">6 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp 48.000</td>
-                        <td class="py-3.5 px-5 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">Selesai</span>
-                        </td>
-                    </tr>
+                    @forelse($transaksiTerkini as $index => $trx)
+                        <tr class="hover:bg-gray-50/70 transition-colors">
+                            <td class="py-3.5 px-5 text-center font-bold text-gray-500">{{ $index + 1 }}</td>
+                            <td class="py-3.5 px-6 font-bold text-gray-900">
+                                <div>{{ $trx->menu->nama_menu ?? '-' }}</div>
+                                <div class="text-[11px] font-normal text-gray-400">{{ \Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('D MMM Y') }}</div>
+                            </td>
+                            <td class="py-3.5 px-6 text-center font-semibold text-gray-800">{{ $trx->jumlah }} Porsi</td>
+                            <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">Rp {{ number_format($trx->total_harga, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-5 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">{{ ucfirst($trx->status ?? 'Sukses') }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-gray-500 text-xs font-medium">Belum ada riwayat transaksi penjualan tercatat.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetailPrediksi;
 use App\Models\Prediksi;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -96,7 +95,7 @@ class PrediksiController extends Controller
                 'periode_selesai' => Carbon::now()->toDateString(),
                 'total_prediksi_cup' => $plan['total_cup'],
                 'metode' => 'Moving Average',
-                'catatan' => 'Prediksi kebutuhan stok kemasan 1 minggu ke depan berdasarkan tren ' . $rentang . ' minggu terakhir.',
+                'catatan' => 'Prediksi kebutuhan stok kemasan 1 minggu ke depan berdasarkan tren '.$rentang.' minggu terakhir.',
                 'user_id' => Auth::id() ?? 1,
             ]
         );
@@ -131,7 +130,7 @@ class PrediksiController extends Controller
             'message' => 'Prediksi stok kemasan berhasil dihitung!',
             'rentang_minggu' => $rentang,
             'total_cup' => $plan['total_cup'],
-            'total_cup_formatted' => $plan['total_cup'] . ' cup',
+            'total_cup_formatted' => $plan['total_cup'].' cup',
             'svg_pred_line' => $plan['svg_pred_line'],
             'svg_pred_area' => $plan['svg_pred_area'],
             'predictions' => $plan['predictions'],

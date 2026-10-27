@@ -13,32 +13,35 @@ use Illuminate\Support\Facades\Auth;
 class PenjualanController extends Controller
 {
     /**
-     * Tampilkan halaman data penjualan dengan form dan riwayat transaksi hari ini.
+     * Tampilkan halaman data penjualan dengan form dan riwayat transaksi.
+     * Default menampilkan seluruh riwayat transaksi, dan dapat difilter berdasarkan tanggal.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $menus = Menu::where('is_aktif', true)->orderBy('id')->get();
 
-        $todayStr = Carbon::today()->toDateString();
+        $filterTanggal = $request->query('tanggal');
 
-        // Cari transaksi hari ini, atau gunakan tanggal transaksi terakhir jika ada data historis
-        $queryDate = $todayStr;
-        if (! Penjualan::whereDate('tanggal', $todayStr)->exists()) {
-            $latestDate = Penjualan::max('tanggal');
-            if ($latestDate) {
-                $queryDate = Carbon::parse($latestDate)->toDateString();
+        $query = Penjualan::with('menu')->latest('tanggal')->latest('id');
+
+        if (! empty($filterTanggal)) {
+            try {
+                $parsedDate = str_contains($filterTanggal, '/')
+                    ? Carbon::createFromFormat('d/m/Y', $filterTanggal)->toDateString()
+                    : Carbon::parse($filterTanggal)->toDateString();
+
+                $query->whereDate('tanggal', $parsedDate);
+            } catch (\Exception $e) {
+                // Abaikan jika format tidak valid
             }
         }
 
-        $penjualanHariIni = Penjualan::with('menu')
-            ->whereDate('tanggal', $queryDate)
-            ->latest('id')
-            ->get();
+        $penjualanHariIni = $query->get();
 
         $totalPorsi = $penjualanHariIni->sum('jumlah');
         $totalPendapatan = $penjualanHariIni->sum('total_harga');
 
-        return view('penjualan', compact('menus', 'penjualanHariIni', 'totalPorsi', 'totalPendapatan', 'queryDate'));
+        return view('penjualan', compact('menus', 'penjualanHariIni', 'totalPorsi', 'totalPendapatan', 'filterTanggal'));
     }
 
     /**
@@ -74,7 +77,7 @@ class PenjualanController extends Controller
         // Generate nomor transaksi unik TRX-YYYYMMDD-XXXX
         $dateCode = $tanggal->format('Ymd');
         $todayCount = Penjualan::whereDate('tanggal', $tanggal->toDateString())->count() + 1;
-        $nomorTransaksi = 'TRX-' . $dateCode . '-' . str_pad((string) $todayCount, 4, '0', STR_PAD_LEFT);
+        $nomorTransaksi = 'TRX-'.$dateCode.'-'.str_pad((string) $todayCount, 4, '0', STR_PAD_LEFT);
 
         $penjualan = Penjualan::create([
             'nomor_transaksi' => $nomorTransaksi,
@@ -91,7 +94,7 @@ class PenjualanController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaksi ' . $jumlah . ' Porsi ' . $menu->nama_menu . ' (Rp ' . number_format($totalHarga, 0, ',', '.') . ') berhasil dicatat!',
+            'message' => 'Transaksi '.$jumlah.' Porsi '.$menu->nama_menu.' (Rp '.number_format($totalHarga, 0, ',', '.').') berhasil dicatat!',
             'data' => [
                 'id' => $penjualan->id,
                 'nomor_transaksi' => $penjualan->nomor_transaksi,
@@ -99,7 +102,7 @@ class PenjualanController extends Controller
                 'nama_menu' => $menu->nama_menu,
                 'jumlah' => $penjualan->jumlah,
                 'total_harga' => $penjualan->total_harga,
-                'total_harga_formatted' => 'Rp ' . number_format($penjualan->total_harga, 0, ',', '.'),
+                'total_harga_formatted' => 'Rp '.number_format($penjualan->total_harga, 0, ',', '.'),
                 'status' => $penjualan->status,
             ],
         ], 201);
@@ -112,7 +115,7 @@ class PenjualanController extends Controller
     {
         $validated = $request->validate([
             'menu_id' => ['required', 'exists:menus,id'],
-            'jumlah'  => ['required', 'integer', 'min:1'],
+            'jumlah' => ['required', 'integer', 'min:1'],
             'tanggal' => ['nullable', 'string'],
         ]);
 
@@ -133,11 +136,11 @@ class PenjualanController extends Controller
         }
 
         $penjualan->update([
-            'menu_id'      => $menu->id,
-            'jumlah'       => $jumlah,
+            'menu_id' => $menu->id,
+            'jumlah' => $jumlah,
             'harga_satuan' => $hargaSatuan,
-            'total_harga'  => $totalHarga,
-            'tanggal'      => $tanggal->toDateString(),
+            'total_harga' => $totalHarga,
+            'tanggal' => $tanggal->toDateString(),
         ]);
 
         $penjualan->load('menu');
@@ -146,12 +149,12 @@ class PenjualanController extends Controller
             'success' => true,
             'message' => 'Transaksi berhasil diperbarui!',
             'data' => [
-                'id'                   => $penjualan->id,
-                'tanggal_formatted'    => $penjualan->tanggal->locale('id')->isoFormat('D MMM Y'),
-                'nama_menu'            => $menu->nama_menu,
-                'jumlah'               => $penjualan->jumlah,
-                'total_harga'          => $penjualan->total_harga,
-                'total_harga_formatted' => 'Rp ' . number_format($penjualan->total_harga, 0, ',', '.'),
+                'id' => $penjualan->id,
+                'tanggal_formatted' => $penjualan->tanggal->locale('id')->isoFormat('D MMM Y'),
+                'nama_menu' => $menu->nama_menu,
+                'jumlah' => $penjualan->jumlah,
+                'total_harga' => $penjualan->total_harga,
+                'total_harga_formatted' => 'Rp '.number_format($penjualan->total_harga, 0, ',', '.'),
             ],
         ]);
     }

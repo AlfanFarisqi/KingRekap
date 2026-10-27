@@ -140,11 +140,42 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
         <div class="p-4 sm:px-6 bg-gray-50/80 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-                <h3 class="font-extrabold text-base text-gray-900">Riwayat Transaksi Penjualan Hari Ini</h3>
-                <p class="text-xs text-gray-500 mt-0.5">Total harga dihitung otomatis dari jumlah porsi dikalikan harga menu</p>
+                <h3 class="font-extrabold text-base text-gray-900">Riwayat Transaksi Penjualan</h3>
+                <p class="text-xs text-gray-500 mt-0.5">Semua data riwayat transaksi tercatat di database King Es Teler</p>
             </div>
             <div id="summaryBadge" class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-lg border border-emerald-200 shrink-0">
-                Total Hari Ini: {{ $totalPorsi }} Porsi (Rp {{ number_format($totalPendapatan, 0, ',', '.') }})
+                Total: {{ $totalPorsi }} Porsi (Rp {{ number_format($totalPendapatan, 0, ',', '.') }})
+            </div>
+        </div>
+
+        <!-- Toolbar Filter Tanggal -->
+        <div class="px-4 py-3 sm:px-6 bg-white border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+            <form method="GET" action="{{ route('penjualan.index') }}" class="flex flex-wrap items-center gap-2.5">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-gray-600">Filter Tanggal:</span>
+                    <input type="date" 
+                           name="tanggal" 
+                           value="{{ $filterTanggal ?? '' }}" 
+                           class="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-lg text-xs font-semibold text-gray-800 focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none" />
+                </div>
+                <button type="submit" 
+                        class="px-3.5 py-1.5 bg-[#0c3b2e] hover:bg-[#08281f] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-2xs">
+                    Terapkan Filter
+                </button>
+                @if(!empty($filterTanggal))
+                    <a href="{{ route('penjualan.index') }}" 
+                       class="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition-colors cursor-pointer">
+                        ✕ Tampilkan Semua
+                    </a>
+                @endif
+            </form>
+
+            <div class="text-xs text-gray-500 font-medium">
+                @if(!empty($filterTanggal))
+                    Filter aktif: <span class="font-bold text-[#0c3b2e]">{{ \Carbon\Carbon::parse($filterTanggal)->locale('id')->isoFormat('D MMMM Y') }}</span> ({{ count($penjualanHariIni) }} transaksi)
+                @else
+                    Status: <span class="font-bold text-emerald-700">Menampilkan Semua Riwayat ({{ count($penjualanHariIni) }} transaksi)</span>
+                @endif
             </div>
         </div>
 
@@ -187,7 +218,7 @@
                         </tr>
                     @empty
                         <tr id="emptySalesRow">
-                            <td colspan="6" class="py-8 text-center text-gray-500 font-medium">Belum ada transaksi pada tanggal ini.</td>
+                            <td colspan="6" class="py-8 text-center text-gray-500 font-medium">Belum ada riwayat transaksi penjualan.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -409,7 +440,7 @@
 
         const badge = document.getElementById('summaryBadge');
         if (badge) {
-            badge.textContent = `Total Hari Ini: ${totalPorsi} Porsi (${formatRupiah(totalRevenue)})`;
+            badge.textContent = `Total: ${totalPorsi} Porsi (${formatRupiah(totalRevenue)})`;
         }
     }
 

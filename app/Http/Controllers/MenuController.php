@@ -46,7 +46,7 @@ class MenuController extends Controller
                 'id' => $menu->id,
                 'nama_menu' => $menu->nama_menu,
                 'harga' => $menu->harga,
-                'harga_formatted' => 'Rp ' . number_format($menu->harga, 0, ',', '.'),
+                'harga_formatted' => 'Rp '.number_format($menu->harga, 0, ',', '.'),
             ],
         ], 201);
     }
@@ -77,7 +77,7 @@ class MenuController extends Controller
                 'id' => $menu->id,
                 'nama_menu' => $menu->nama_menu,
                 'harga' => $menu->harga,
-                'harga_formatted' => 'Rp ' . number_format($menu->harga, 0, ',', '.'),
+                'harga_formatted' => 'Rp '.number_format($menu->harga, 0, ',', '.'),
             ],
         ]);
     }
