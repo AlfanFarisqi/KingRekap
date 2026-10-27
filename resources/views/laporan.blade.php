@@ -19,17 +19,22 @@
         </div>
     </div>
 
-    <!-- Title Page (Screen Only) -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-            Laporan Penjualan
-        </h1>
+    <!-- Header Screen Only -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200/80 no-print">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0c3b2e] tracking-tight">
+                Laporan Penjualan
+            </h1>
+            <p class="text-sm sm:text-base text-gray-600 mt-1">
+                Rekapitulasi transaksi, performa penjualan menu, dan ringkasan omzet King Es Teler.
+            </p>
+        </div>
 
-        <!-- Export / Action buttons -->
-        <div class="flex items-center gap-2">
+        <!-- Action buttons -->
+        <div class="flex items-center gap-2.5">
             <button type="button" 
                     onclick="window.print()"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-xs font-bold text-gray-700 shadow-2xs transition-colors cursor-pointer">
+                    class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-xs font-bold text-gray-700 shadow-2xs hover:shadow transition-all cursor-pointer">
                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                 </svg>
@@ -37,8 +42,8 @@
             </button>
             <button type="button" 
                     onclick="exportTableToCSV('laporan-penjualan.csv')"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-xs font-bold text-gray-700 shadow-2xs transition-colors cursor-pointer">
-                <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0c3b2e] hover:bg-[#08281f] text-white rounded-lg text-xs font-bold shadow-sm hover:shadow transition-all cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <span>Unduh CSV</span>
@@ -46,49 +51,62 @@
         </div>
     </div>
 
-    <!-- Filter Periode (Matches screenshot layout) -->
-    <div class="space-y-3 pt-2 no-print">
-        <h2 class="text-lg font-extrabold text-black">
-            Filter Periode
+    <!-- Filter Card: Selaras dengan Form Input Card Data Penjualan -->
+    <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm no-print">
+        <h2 class="text-lg font-extrabold text-[#0c3b2e] mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+            <span>Filter Periode Laporan</span>
         </h2>
 
-        <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+        <div class="flex flex-wrap lg:flex-nowrap items-end gap-4">
             
-            <!-- Segmented Buttons: Harian / Mingguan / Bulanan -->
-            <div class="inline-flex rounded-lg overflow-hidden border border-gray-300 shadow-2xs">
-                <button type="button" 
-                        id="btnHarian"
-                        onclick="setPeriod('harian')"
-                        class="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#0c3b2e] text-white font-bold text-sm sm:text-[15px] transition-colors cursor-pointer">
-                    Harian
-                </button>
-                <button type="button" 
-                        id="btnMingguan"
-                        onclick="setPeriod('mingguan')"
-                        class="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#cbd5e1] hover:bg-gray-300 text-gray-900 font-bold text-sm sm:text-[15px] border-l border-r border-gray-300 transition-colors cursor-pointer">
-                    Mingguan
-                </button>
-                <button type="button" 
-                        id="btnBulanan"
-                        onclick="setPeriod('bulanan')"
-                        class="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#cbd5e1] hover:bg-gray-300 text-gray-900 font-bold text-sm sm:text-[15px] transition-colors cursor-pointer">
-                    Bulanan
-                </button>
+            <!-- Segmented Buttons: Semua / Harian / Mingguan / Bulanan -->
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Jangka Waktu Periode</label>
+                <div class="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200/80">
+                    <button type="button" 
+                            id="btnSemua"
+                            onclick="setPeriod('semua')"
+                            class="px-4 py-2 {{ ($periode ?? 'semua') === 'semua' ? 'bg-[#0c3b2e] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60' }} rounded-lg font-bold text-xs sm:text-sm transition-all cursor-pointer">
+                        Semua
+                    </button>
+                    <button type="button" 
+                            id="btnHarian"
+                            onclick="setPeriod('harian')"
+                            class="px-4 py-2 {{ ($periode ?? '') === 'harian' ? 'bg-[#0c3b2e] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60' }} rounded-lg font-bold text-xs sm:text-sm transition-all cursor-pointer">
+                        Harian
+                    </button>
+                    <button type="button" 
+                            id="btnMingguan"
+                            onclick="setPeriod('mingguan')"
+                            class="px-4 py-2 {{ ($periode ?? '') === 'mingguan' ? 'bg-[#0c3b2e] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60' }} rounded-lg font-bold text-xs sm:text-sm transition-all cursor-pointer">
+                        Mingguan
+                    </button>
+                    <button type="button" 
+                            id="btnBulanan"
+                            onclick="setPeriod('bulanan')"
+                            class="px-4 py-2 {{ ($periode ?? '') === 'bulanan' ? 'bg-[#0c3b2e] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60' }} rounded-lg font-bold text-xs sm:text-sm transition-all cursor-pointer">
+                        Bulanan
+                    </button>
+                </div>
             </div>
 
-            <!-- Date Input & Tampilkan Button -->
-            <div class="flex items-center gap-3">
+            <!-- Tanggal Input & Dropdown Kalender -->
+            <div class="flex-1 min-w-[220px]">
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Pilih Tanggal / Acuan Periode</label>
                 <div class="relative" id="calendarContainer">
                     <div class="relative flex items-center">
                         <input type="text" 
                                id="filterDate"
-                               value="27/09/2026"
+                               value="{{ ($periode ?? 'semua') === 'semua' ? 'Semua Riwayat Transaksi' : $selectedDate }}"
                                readonly
                                onclick="toggleCalendar()"
-                               class="w-60 sm:w-68 pl-4 pr-11 py-2 sm:py-2.5 bg-[#dbe2ea] border border-gray-400 rounded-lg text-gray-900 font-bold text-sm sm:text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0c3b2e] cursor-pointer truncate" />
+                               class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold text-gray-800 focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none cursor-pointer truncate" />
                         <button type="button" 
                                 onclick="toggleCalendar()"
-                                class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-700 hover:text-[#0c3b2e] transition-colors cursor-pointer"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-[#0c3b2e] transition-colors cursor-pointer"
                                 title="Buka Kalender Tanggal">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -110,9 +128,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
-                            <span id="calendarMonthYear" class="text-sm font-extrabold text-[#0c3b2e]">
-                                September 2026
-                            </span>
+                            <span id="calendarMonthYear" class="text-sm font-extrabold text-[#0c3b2e]"></span>
                             <button type="button" 
                                     onclick="changeCalendarMonth(1)"
                                     class="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-black cursor-pointer transition-colors"
@@ -136,16 +152,11 @@
 
                         <!-- Grid Tanggal Kalender -->
                         <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1 text-center text-xs sm:text-sm font-semibold">
-                            <!-- Diisi otomatis via JavaScript -->
+                            <!-- Diisi via JavaScript -->
                         </div>
 
                         <!-- Footer Kalender -->
                         <div class="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                            <button type="button" 
-                                    onclick="selectDemoDate()"
-                                    class="font-bold text-[#0c3b2e] hover:underline cursor-pointer">
-                                27 Sep 2026
-                            </button>
                             <button type="button" 
                                     onclick="selectToday()"
                                     class="font-bold text-emerald-700 hover:underline cursor-pointer">
@@ -159,112 +170,107 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Tombol Aksi Filter -->
+            <div class="flex items-center gap-2 shrink-0">
                 <button type="button" 
                         onclick="applyFilter()"
-                        class="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#0c3b2e] hover:bg-[#0a2e22] active:scale-98 text-white font-bold text-sm sm:text-base rounded-lg shadow-2xs transition-all duration-150 cursor-pointer">
-                    Tampilkan
+                        class="py-2.5 px-5 bg-[#0c3b2e] hover:bg-[#08281f] text-white font-bold text-sm rounded-lg shadow-sm transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <span>Terapkan Filter</span>
+                </button>
+                <button type="button" 
+                        onclick="setPeriod('semua')"
+                        class="py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-lg transition-colors cursor-pointer whitespace-nowrap">
+                    Reset
                 </button>
             </div>
 
         </div>
+
+        <!-- Info Bar Status Filter Aktif -->
+        <div class="mt-4 pt-3.5 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div class="text-gray-500">
+                Status Filter: <span id="filterStatusText" class="font-bold text-[#0c3b2e]">{{ ($periode ?? 'semua') === 'semua' ? 'Menampilkan Semua Riwayat Transaksi' : 'Periode ' . ucfirst($periode ?? '') }}</span>
+            </div>
+            <div class="text-gray-400">
+                Data diperbarui secara riil dari database transaksi
+            </div>
+        </div>
+
     </div>
 
-    <!-- Data Table Container (Exact replica of user screenshot) -->
-    <div class="bg-white rounded-xl shadow-xs border border-gray-300 overflow-hidden">
+    <!-- Tabel Rekap Transaksi (Selaras dengan Riwayat Transaksi Penjualan) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
         
+        <!-- Header Card Tabel -->
+        <div class="p-4 sm:px-6 bg-gray-50/80 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <h3 class="font-extrabold text-base text-gray-900">Rekapitulasi Data Transaksi</h3>
+                <p class="text-xs text-gray-500 mt-0.5">Daftar transaksi penjualan terperinci King Es Teler</p>
+            </div>
+            <div id="summaryBadge" class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-lg border border-emerald-200 shrink-0">
+                Total: {{ $totalPorsi }} Porsi (Rp {{ number_format($totalPendapatan, 0, ',', '.') }})
+            </div>
+        </div>
+
+        <!-- Tabel Transaksi -->
         <div class="overflow-x-auto">
-            <table id="laporanTable" class="w-full border-collapse text-left">
-                <!-- Header (light gray background, centered & bordered cells) -->
+            <table class="w-full border-collapse text-left text-sm" id="laporanTable">
                 <thead>
-                    <tr class="bg-[#dbe2ea] text-gray-900 font-bold text-sm sm:text-base border-b border-gray-300">
-                        <th class="py-3 px-4 text-center border-r border-gray-300 w-16">No</th>
-                        <th class="py-3 px-6 text-center border-r border-gray-300 w-44">Tanggal</th>
-                        <th class="py-3 px-6 text-left border-r border-gray-300">Nama Menu</th>
-                        <th class="py-3 px-6 text-center border-r border-gray-300 w-36">Jumlah Terjual</th>
-                        <th class="py-3 px-6 text-left w-48">Total</th>
+                    <tr class="bg-gray-100/90 text-gray-800 font-bold border-b border-gray-200">
+                        <th class="py-3.5 px-4 text-center w-16">No</th>
+                        <th class="py-3.5 px-4 text-center w-36">Tanggal</th>
+                        <th class="py-3.5 px-6">Nama Menu</th>
+                        <th class="py-3.5 px-6 text-center w-32">Jumlah</th>
+                        <th class="py-3.5 px-6 text-right w-44">Total Harga</th>
+                        <th class="py-3.5 px-4 text-center w-28">Status</th>
                     </tr>
                 </thead>
-                <!-- Rows with grid lines -->
-                <tbody id="tableBody" class="text-sm sm:text-base text-gray-900 divide-y divide-gray-300">
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">12</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 300.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">8</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 280.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 450.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 150.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 168.000</td>
-                    </tr>
+                <tbody id="tableBody" class="divide-y divide-gray-100 text-gray-900">
+                    @forelse($laporan as $index => $item)
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3.5 px-4 text-center font-bold text-gray-700">{{ $index + 1 }}</td>
+                            <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 whitespace-nowrap">
+                                {{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('D MMM Y') }}
+                            </td>
+                            <td class="py-3.5 px-6 font-semibold text-gray-900">
+                                {{ $item->menu->nama_menu ?? $item->nama_menu ?? 'Es Teler' }}
+                            </td>
+                            <td class="py-3.5 px-6 text-center font-bold text-gray-800">
+                                {{ $item->jumlah }} Porsi
+                            </td>
+                            <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">
+                                Rp {{ number_format($item->total_harga, 0, ',', '.') }}
+                            </td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    {{ ucfirst($item->status ?? 'sukses') }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr id="emptyReportRow">
+                            <td colspan="6" class="py-8 text-center text-gray-500 font-medium">
+                                Tidak ada transaksi penjualan pada periode ini.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        <!-- Table Footer / Pagination Controls (Matches screenshot) -->
-        <div class="px-4 py-3 bg-[#f1f5f9] flex items-center justify-end gap-1.5 border-t border-gray-300 no-print">
-            <button type="button" 
-                    class="w-7 h-7 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 text-xs font-bold cursor-pointer"
-                    disabled>
-                &lsaquo;
-            </button>
-            <button type="button" 
-                    class="w-7 h-7 flex items-center justify-center rounded border border-gray-400 bg-white text-black font-bold text-xs shadow-2xs">
-                1
-            </button>
-            <button type="button" 
-                    class="w-7 h-7 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 text-xs font-bold cursor-pointer"
-                    disabled>
-                &rsaquo;
-            </button>
-        </div>
-
-    </div>
-
-    <!-- Bottom Card: Total Pendapatan (Periode Dipilih) (Matches screenshot) -->
-    <div class="bg-[#d5dde8] rounded-2xl p-5 sm:p-7 flex items-center gap-4 sm:gap-6 border border-gray-300 shadow-2xs">
-        
-        <!-- Cash register / Payment icon -->
-        <div class="text-black shrink-0">
-            <svg class="w-10 h-10 sm:w-12 sm:h-12" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
-                <circle cx="12" cy="15" r="2"/>
-            </svg>
-        </div>
-
-        <!-- Text Description and Amount -->
-        <div>
-            <p class="text-sm sm:text-base font-bold text-gray-900 leading-tight">
-                Total Pendapatan (Periode Dipilih)
-            </p>
-            <h3 id="totalRevenueText" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-black tracking-tight mt-1">
-                Rp 1.348.000
-            </h3>
+        <!-- Table Footer / Summary Row -->
+        <div class="px-6 py-4 bg-gray-50/80 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-600 font-medium">
+            <div>
+                Menampilkan data laporan penjualan terverifikasi kasir.
+            </div>
+            <div class="flex items-center gap-4">
+                <span>Total Omzet: <strong id="footerTotalOmzet" class="text-[#0c3b2e] font-extrabold text-sm">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</strong></span>
+            </div>
         </div>
 
     </div>
@@ -273,14 +279,20 @@
 
 <!-- Interactive JS for Calendar, Filters, and Export -->
 <script>
-    let currentPeriod = 'harian';
+    let currentPeriod = '{{ $periode ?? "semua" }}';
 
     // Calendar state
-    let calYear = 2026;
-    let calMonth = 8; // 8 = September (0-indexed)
-    let selectedDay = 27;
-    let selectedMonth = 8;
-    let selectedYear = 2026;
+    const initialDateStr = '{{ $selectedDate }}';
+    const dateParts = initialDateStr.split('/');
+    let initDay = dateParts.length === 3 ? parseInt(dateParts[0], 10) : new Date().getDate();
+    let initMonth = dateParts.length === 3 ? (parseInt(dateParts[1], 10) - 1) : new Date().getMonth();
+    let initYear = dateParts.length === 3 ? parseInt(dateParts[2], 10) : new Date().getFullYear();
+
+    let calYear = initYear;
+    let calMonth = initMonth;
+    let selectedDay = initDay;
+    let selectedMonth = initMonth;
+    let selectedYear = initYear;
 
     const monthNamesIndo = [
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -325,11 +337,9 @@
         titleEl.textContent = monthNamesIndo[calMonth] + ' ' + calYear;
         gridEl.innerHTML = '';
 
-        // Day of week of 1st day of month (0 = Sunday, 1 = Monday, etc.)
         const firstDayIndex = new Date(calYear, calMonth, 1).getDay();
         const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
 
-        // Previous month filler days
         const prevMonthTotalDays = new Date(calYear, calMonth, 0).getDate();
         for (let i = firstDayIndex - 1; i >= 0; i--) {
             const emptyBtn = document.createElement('div');
@@ -338,7 +348,6 @@
             gridEl.appendChild(emptyBtn);
         }
 
-        // Current month days
         for (let d = 1; d <= totalDays; d++) {
             const dayBtn = document.createElement('button');
             dayBtn.type = 'button';
@@ -365,6 +374,11 @@
         selectedMonth = month;
         selectedYear = year;
 
+        if (currentPeriod === 'semua') {
+            currentPeriod = 'harian';
+            updatePeriodButtonsUI('harian');
+        }
+
         const dd = String(day).padStart(2, '0');
         const mm = String(month + 1).padStart(2, '0');
 
@@ -383,18 +397,11 @@
 
     function selectToday() {
         const today = new Date();
-        calMonth = 9; // Oktober
-        calYear = 2026;
-        selectDate(17, 9, 2026);
+        calMonth = today.getMonth();
+        calYear = today.getFullYear();
+        selectDate(today.getDate(), today.getMonth(), today.getFullYear());
     }
 
-    function selectDemoDate() {
-        calMonth = 8; // September
-        calYear = 2026;
-        selectDate(27, 8, 2026);
-    }
-
-    // Close calendar when clicking outside
     document.addEventListener('click', function(event) {
         const container = document.getElementById('calendarContainer');
         if (container && !container.contains(event.target)) {
@@ -402,211 +409,123 @@
         }
     });
 
-    function setPeriod(period) {
-        currentPeriod = period;
+    function updatePeriodButtonsUI(period) {
+        const btnSemua = document.getElementById('btnSemua');
         const btnHarian = document.getElementById('btnHarian');
         const btnMingguan = document.getElementById('btnMingguan');
         const btnBulanan = document.getElementById('btnBulanan');
-        const dateInput = document.getElementById('filterDate');
 
-        // Reset styling
-        [btnHarian, btnMingguan, btnBulanan].forEach(btn => {
-            btn.className = "px-5 sm:px-6 py-2 sm:py-2.5 bg-[#cbd5e1] hover:bg-gray-300 text-gray-900 font-bold text-sm sm:text-[15px] border-gray-300 transition-colors cursor-pointer";
+        const inactiveClass = "px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200/60 rounded-lg font-semibold text-xs sm:text-sm transition-all cursor-pointer";
+        const activeClass = "px-4 py-2 bg-[#0c3b2e] text-white rounded-lg font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer";
+
+        [btnSemua, btnHarian, btnMingguan, btnBulanan].forEach(btn => {
+            if (btn) btn.className = inactiveClass;
         });
 
-        if (period === 'harian') {
-            btnHarian.className = "px-5 sm:px-6 py-2 sm:py-2.5 bg-[#0c3b2e] text-white font-bold text-sm sm:text-[15px] transition-colors cursor-pointer";
+        if (period === 'semua' && btnSemua) btnSemua.className = activeClass;
+        if (period === 'harian' && btnHarian) btnHarian.className = activeClass;
+        if (period === 'mingguan' && btnMingguan) btnMingguan.className = activeClass;
+        if (period === 'bulanan' && btnBulanan) btnBulanan.className = activeClass;
+    }
+
+    function setPeriod(period) {
+        currentPeriod = period;
+        updatePeriodButtonsUI(period);
+
+        const dateInput = document.getElementById('filterDate');
+
+        if (period === 'semua') {
+            dateInput.value = 'Semua Riwayat Transaksi';
+        } else if (period === 'harian') {
             const dd = String(selectedDay).padStart(2, '0');
             const mm = String(selectedMonth + 1).padStart(2, '0');
             dateInput.value = `${dd}/${mm}/${selectedYear}`;
         } else if (period === 'mingguan') {
-            btnMingguan.className = "px-5 sm:px-6 py-2 sm:py-2.5 bg-[#0c3b2e] text-white font-bold text-sm sm:text-[15px] border-l border-r border-gray-300 transition-colors cursor-pointer";
             const weekNum = Math.min(Math.ceil(selectedDay / 7), 4);
             dateInput.value = `Minggu ke-${weekNum} ${monthShortIndo[selectedMonth]} ${selectedYear}`;
         } else if (period === 'bulanan') {
-            btnBulanan.className = "px-5 sm:px-6 py-2 sm:py-2.5 bg-[#0c3b2e] text-white font-bold text-sm sm:text-[15px] transition-colors cursor-pointer";
             dateInput.value = `${monthNamesIndo[selectedMonth]} ${selectedYear}`;
         }
+
         applyFilter();
     }
 
-    function applyFilter() {
-        const totalText = document.getElementById('totalRevenueText');
-        const tbody = document.getElementById('tableBody');
-        const dateStr = `${selectedDay} ${monthShortIndo[selectedMonth]} ${selectedYear}`;
+    function formatRupiah(number) {
+        return 'Rp ' + Number(number).toLocaleString('id-ID');
+    }
 
-        if (currentPeriod === 'harian') {
-            if (selectedDay === 27 && selectedMonth === 8 && selectedYear === 2026) {
-                totalText.textContent = 'Rp 1.348.000';
-                tbody.innerHTML = `
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">12</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 300.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">8</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 280.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 450.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 150.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 168.000</td>
-                    </tr>
-                `;
-            } else {
-                totalText.textContent = 'Rp 1.145.000';
-                tbody.innerHTML = `
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 250.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Original</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">9</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 315.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Reguler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 270.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Spesial Buah</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 140.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Durian Monthong</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 170.000</td>
-                    </tr>
-                `;
+    async function applyFilter() {
+        const tbody = document.getElementById('tableBody');
+        const summaryBadge = document.getElementById('summaryBadge');
+        const filterStatusText = document.getElementById('filterStatusText');
+        const footerTotalOmzet = document.getElementById('footerTotalOmzet');
+
+        const dd = String(selectedDay).padStart(2, '0');
+        const mm = String(selectedMonth + 1).padStart(2, '0');
+        const dateParam = `${dd}/${mm}/${selectedYear}`;
+
+        try {
+            const url = `{{ route('laporan.data') }}?periode=${currentPeriod}&tanggal=${encodeURIComponent(dateParam)}`;
+            const response = await fetch(url, {
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                if (footerTotalOmzet) footerTotalOmzet.textContent = result.totalPendapatanFormatted;
+
+                // Update badge and status text
+                if (summaryBadge) {
+                    summaryBadge.textContent = `Total: ${result.totalPorsi} Porsi (${result.totalPendapatanFormatted})`;
+                }
+                
+                if (filterStatusText) {
+                    if (currentPeriod === 'semua') {
+                        filterStatusText.textContent = `Menampilkan Semua Riwayat Transaksi (${result.data.length} transaksi)`;
+                    } else if (currentPeriod === 'harian') {
+                        filterStatusText.textContent = `Filter Harian: ${result.tanggal} (${result.data.length} transaksi)`;
+                    } else if (currentPeriod === 'mingguan') {
+                        filterStatusText.textContent = `Filter Mingguan: ${result.tanggal} (${result.data.length} transaksi)`;
+                    } else if (currentPeriod === 'bulanan') {
+                        filterStatusText.textContent = `Filter Bulanan: ${result.tanggal} (${result.data.length} transaksi)`;
+                    }
+                }
+
+                // Update Table
+                if (result.data && result.data.length > 0) {
+                    tbody.innerHTML = result.data.map(item => `
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3.5 px-4 text-center font-bold text-gray-700">${item.no}</td>
+                            <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 whitespace-nowrap">${item.tanggal}</td>
+                            <td class="py-3.5 px-6 font-semibold text-gray-900">${item.nama_menu}</td>
+                            <td class="py-3.5 px-6 text-center font-bold text-gray-800">${item.jumlah} Porsi</td>
+                            <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]">${item.total_harga_formatted}</td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Sukses
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-gray-500 font-medium">Tidak ada transaksi penjualan pada periode ini.</td>
+                        </tr>
+                    `;
+                }
             }
-        } else if (currentPeriod === 'mingguan') {
-            totalText.textContent = 'Rp 9.436.000';
-            tbody.innerHTML = `
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">92</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 2.300.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Original</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">65</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 2.275.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Reguler</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">68</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 3.060.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Spesial Buah</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">41</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 1.148.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Durian</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">22</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 653.000</td>
-                </tr>
-            `;
-        } else if (currentPeriod === 'bulanan') {
-            totalText.textContent = 'Rp 38.850.000';
-            tbody.innerHTML = `
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 1)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">260</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.100.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 2)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">285</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.975.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 3)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">295</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 10.339.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 4)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">270</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.436.000</td>
-                </tr>
-            `;
+        } catch (e) {
+            console.error('Error in applyFilter:', e);
         }
     }
 
     function exportTableToCSV(filename) {
-        let csv = [];
-        let rows = document.querySelectorAll("#laporanTable tr");
-        for (let i = 0; i < rows.length; i++) {
-            let row = [], cols = rows[i].querySelectorAll("td, th");
-            for (let j = 0; j < cols.length; j++) {
-                row.push('"' + cols[j].innerText.trim() + '"');
-            }
-            csv.push(row.join(","));
-        }
-        let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-        let downloadLink = document.createElement("a");
-        downloadLink.download = filename;
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        const dd = String(selectedDay).padStart(2, '0');
+        const mm = String(selectedMonth + 1).padStart(2, '0');
+        const dateParam = `${dd}/${mm}/${selectedYear}`;
+        window.location.href = `{{ route('laporan.export') }}?periode=${currentPeriod}&tanggal=${encodeURIComponent(dateParam)}`;
     }
 </script>
 @endsection

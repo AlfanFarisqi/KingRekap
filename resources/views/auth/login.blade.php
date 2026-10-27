@@ -50,7 +50,8 @@
             <!-- Card Login -->
             <main class="w-full bg-white rounded-2xl shadow-[0_12px_36px_-6px_rgba(0,0,0,0.09),0_4px_14px_-2px_rgba(0,0,0,0.04)] border border-gray-100/90 p-6 sm:p-8 md:p-9 transition-all">
                 
-                <form id="loginForm" novalidate onsubmit="handleLogin(event)" class="space-y-4 sm:space-y-5">
+                <form id="loginForm" method="POST" action="{{ route('login.post') }}" novalidate onsubmit="handleLogin(event)" class="space-y-4 sm:space-y-5">
+                    @csrf
                     
                     <!-- Field: Username / Email -->
                     <div>
@@ -169,7 +170,7 @@
             }
         }
 
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             const user = document.getElementById('login_user').value.trim();
             const pass = document.getElementById('login_password').value;
@@ -200,20 +201,47 @@
             btnText.textContent = 'Memverifikasi...';
             btnSpinner.classList.remove('hidden');
 
-            setTimeout(() => {
+            try {
+                const token = document.querySelector('input[name="_token"]')?.value;
+                const response = await fetch("{{ route('login.post') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        username: user,
+                        password: pass
+                    })
+                });
+
+                const result = await response.json();
+
                 btn.disabled = false;
                 btnText.textContent = 'Masuk';
                 btnSpinner.classList.add('hidden');
 
-                document.getElementById('modalLoginUser').textContent = user;
-                const modal = document.getElementById('loginSuccessModal');
-                const modalCard = document.getElementById('loginModalCard');
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modalCard.classList.remove('scale-95');
-                    modalCard.classList.add('scale-100');
-                }, 10);
-            }, 600);
+                if (response.ok && result.success) {
+                    document.getElementById('modalLoginUser').textContent = result.user?.name || user;
+                    const modal = document.getElementById('loginSuccessModal');
+                    const modalCard = document.getElementById('loginModalCard');
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalCard.classList.remove('scale-95');
+                        modalCard.classList.add('scale-100');
+                    }, 10);
+                } else {
+                    document.getElementById('loginPasswordError').textContent = result.message || 'Username/email atau password salah.';
+                    document.getElementById('loginPasswordError').classList.remove('hidden');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btnText.textContent = 'Masuk';
+                btnSpinner.classList.add('hidden');
+                document.getElementById('loginPasswordError').textContent = 'Terjadi kesalahan saat memproses login.';
+                document.getElementById('loginPasswordError').classList.remove('hidden');
+            }
         }
 
         function closeLoginModal() {

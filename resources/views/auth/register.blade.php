@@ -57,7 +57,8 @@
                 <!-- Alert Message Container (Dynamic via JS) -->
                 <div id="alertBox" class="hidden mb-5 p-3.5 rounded-lg text-sm font-medium transition-all"></div>
 
-                <form id="registerForm" novalidate onsubmit="handleRegister(event)" class="space-y-4 sm:space-y-4.5">
+                <form id="registerForm" method="POST" action="{{ route('register.post') }}" novalidate onsubmit="handleRegister(event)" class="space-y-4 sm:space-y-4.5">
+                    @csrf
                     
                     <!-- Field: Username -->
                     <div>
@@ -224,8 +225,8 @@
             }
         }
 
-        // Frontend Registration Handler (No Backend)
-        function handleRegister(event) {
+        // Backend-connected Registration Handler
+        async function handleRegister(event) {
             event.preventDefault();
 
             // Clear previous errors
@@ -286,30 +287,52 @@
             btnText.textContent = 'Mendaftarkan...';
             btnSpinner.classList.remove('hidden');
 
-            // Simulate Front-End Network delay
-            setTimeout(() => {
+            try {
+                const token = document.querySelector('input[name="_token"]')?.value;
+                const response = await fetch("{{ route('register.post') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password,
+                        password_confirmation: confirmPassword
+                    })
+                });
+
+                const result = await response.json();
+
                 btn.disabled = false;
                 btnText.textContent = 'Daftar';
                 btnSpinner.classList.add('hidden');
 
-                // Show Success Modal
-                document.getElementById('modalUsername').textContent = username;
-                const modal = document.getElementById('successModal');
-                const modalCard = document.getElementById('modalCard');
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modalCard.classList.remove('scale-95');
-                    modalCard.classList.add('scale-100');
-                }, 10);
-
-                // Optional: Save to localStorage for demo persistence
-                try {
-                    const demoUsers = JSON.parse(localStorage.getItem('kingrekap_users') || '[]');
-                    demoUsers.push({ username, email, registeredAt: new Date().toISOString() });
-                    localStorage.setItem('kingrekap_users', JSON.stringify(demoUsers));
-                } catch(e) {}
-
-            }, 600);
+                if (response.ok && result.success) {
+                    // Show Success Modal
+                    document.getElementById('modalUsername').textContent = username;
+                    const modal = document.getElementById('successModal');
+                    const modalCard = document.getElementById('modalCard');
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalCard.classList.remove('scale-95');
+                        modalCard.classList.add('scale-100');
+                    }, 10);
+                } else if (result.errors) {
+                    if (result.errors.username) showFieldError('usernameError', result.errors.username[0]);
+                    if (result.errors.email) showFieldError('emailError', result.errors.email[0]);
+                    if (result.errors.password) showFieldError('passwordError', result.errors.password[0]);
+                } else {
+                    showAlert(result.message || 'Terjadi kesalahan saat pendaftaran.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btnText.textContent = 'Daftar';
+                btnSpinner.classList.add('hidden');
+                showAlert('Gagal terhubung ke server. Silakan coba lagi.', 'error');
+            }
         }
 
         function showFieldError(elementId, message) {

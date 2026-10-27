@@ -30,7 +30,6 @@
                 <!-- Dropdown Select -->
                 <div class="relative w-full sm:w-96">
                     <select id="rentangData" 
-                            onchange="updatePredictionChart()"
                             class="w-full appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base font-medium text-gray-900 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#0c3b2e] cursor-pointer">
                         <option value="4">4 Minggu Terakhir (1 Sep - 30 Sep 2026)</option>
                         <option value="3">3 Minggu Terakhir (8 Sep - 30 Sep 2026)</option>
@@ -220,7 +219,7 @@
 
 <!-- Interactive Prediction JS -->
 <script>
-    function calculatePrediction() {
+    async function calculatePrediction() {
         const btn = document.getElementById('btnHitung');
         const btnText = document.getElementById('btnHitungText');
         const spinner = document.getElementById('btnSpinner');
@@ -229,69 +228,107 @@
         btnText.textContent = 'Menghitung...';
         spinner.classList.remove('hidden');
 
-        setTimeout(() => {
+        const select = document.getElementById('rentangData').value;
+        const cupVal = document.getElementById('prediksiCupVal');
+        
+        const predLine = document.getElementById('prediksiLine');
+        const predArea = document.getElementById('prediksiArea');
+        const dot1 = document.getElementById('dotPred1');
+        const dot2 = document.getElementById('dotPred2');
+        const dot3 = document.getElementById('dotPred3');
+        const lbl1 = document.getElementById('lblPred1');
+        const lbl2 = document.getElementById('lblPred2');
+        const lbl3 = document.getElementById('lblPred3');
+
+        try {
+            const response = await fetch("{{ route('prediksi.calculate') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ rentang_minggu: parseInt(select, 10) })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                cupVal.textContent = result.total_cup_formatted;
+                if (predLine) predLine.setAttribute('points', result.svg_pred_line);
+                if (predArea) predArea.setAttribute('points', result.svg_pred_area);
+                if (result.predictions && result.predictions.length >= 3) {
+                    if (dot1) { dot1.setAttribute('cx', result.predictions[0].cx); dot1.setAttribute('cy', result.predictions[0].cy); }
+                    if (dot2) { dot2.setAttribute('cx', result.predictions[1].cx); dot2.setAttribute('cy', result.predictions[1].cy); }
+                    if (dot3) { dot3.setAttribute('cx', result.predictions[2].cx); dot3.setAttribute('cy', result.predictions[2].cy); }
+                    if (lbl1) { lbl1.setAttribute('y', result.predictions[0].lbl_y); lbl1.textContent = result.predictions[0].cup; }
+                    if (lbl2) { lbl2.setAttribute('y', result.predictions[1].lbl_y); lbl2.textContent = result.predictions[1].cup; }
+                    if (lbl3) { lbl3.setAttribute('y', result.predictions[2].lbl_y); lbl3.textContent = result.predictions[2].cup; }
+                }
+            } else {
+                applyFallbackPrediction(select);
+            }
+        } catch (err) {
+            applyFallbackPrediction(select);
+        } finally {
             btn.disabled = false;
             btnText.textContent = 'Hitung Prediksi Stok Kemasan';
             spinner.classList.add('hidden');
-
-            const select = document.getElementById('rentangData').value;
-            const cupVal = document.getElementById('prediksiCupVal');
-            
-            const predLine = document.getElementById('prediksiLine');
-            const predArea = document.getElementById('prediksiArea');
-            const dot1 = document.getElementById('dotPred1');
-            const dot2 = document.getElementById('dotPred2');
-            const dot3 = document.getElementById('dotPred3');
-            const lbl1 = document.getElementById('lblPred1');
-            const lbl2 = document.getElementById('lblPred2');
-            const lbl3 = document.getElementById('lblPred3');
-            
-            if (select === '4') {
-                cupVal.textContent = '280 cup';
-                if (predLine) predLine.setAttribute('points', '374,100 476,75 578,55 670,35');
-                if (predArea) predArea.setAttribute('points', '374,100 476,75 578,55 670,35 670,215 374,215');
-                if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '75'); }
-                if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '55'); }
-                if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '35'); }
-                if (lbl1) { lbl1.setAttribute('y', '65'); lbl1.textContent = '280'; }
-                if (lbl2) { lbl2.setAttribute('y', '45'); lbl2.textContent = '310'; }
-                if (lbl3) { lbl3.setAttribute('y', '25'); lbl3.textContent = '350'; }
-            } else if (select === '3') {
-                cupVal.textContent = '295 cup';
-                if (predLine) predLine.setAttribute('points', '374,100 476,68 578,48 670,30');
-                if (predArea) predArea.setAttribute('points', '374,100 476,68 578,48 670,30 670,215 374,215');
-                if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '68'); }
-                if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '48'); }
-                if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '30'); }
-                if (lbl1) { lbl1.setAttribute('y', '58'); lbl1.textContent = '295'; }
-                if (lbl2) { lbl2.setAttribute('y', '38'); lbl2.textContent = '325'; }
-                if (lbl3) { lbl3.setAttribute('y', '20'); lbl3.textContent = '360'; }
-            } else if (select === '2') {
-                cupVal.textContent = '310 cup';
-                if (predLine) predLine.setAttribute('points', '374,100 476,60 578,40 670,22');
-                if (predArea) predArea.setAttribute('points', '374,100 476,60 578,40 670,22 670,215 374,215');
-                if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '60'); }
-                if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '40'); }
-                if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '22'); }
-                if (lbl1) { lbl1.setAttribute('y', '50'); lbl1.textContent = '310'; }
-                if (lbl2) { lbl2.setAttribute('y', '30'); lbl2.textContent = '340'; }
-                if (lbl3) { lbl3.setAttribute('y', '14'); lbl3.textContent = '375'; }
-            } else {
-                cupVal.textContent = '320 cup';
-                if (predLine) predLine.setAttribute('points', '374,100 476,55 578,35 670,18');
-                if (predArea) predArea.setAttribute('points', '374,100 476,55 578,35 670,18 670,215 374,215');
-                if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '55'); }
-                if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '35'); }
-                if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '18'); }
-                if (lbl1) { lbl1.setAttribute('y', '45'); lbl1.textContent = '320'; }
-                if (lbl2) { lbl2.setAttribute('y', '25'); lbl2.textContent = '350'; }
-                if (lbl3) { lbl3.setAttribute('y', '10'); lbl3.textContent = '390'; }
-            }
-        }, 400);
+        }
     }
 
-    function updatePredictionChart() {
-        calculatePrediction();
+    function applyFallbackPrediction(select) {
+        const cupVal = document.getElementById('prediksiCupVal');
+        const predLine = document.getElementById('prediksiLine');
+        const predArea = document.getElementById('prediksiArea');
+        const dot1 = document.getElementById('dotPred1');
+        const dot2 = document.getElementById('dotPred2');
+        const dot3 = document.getElementById('dotPred3');
+        const lbl1 = document.getElementById('lblPred1');
+        const lbl2 = document.getElementById('lblPred2');
+        const lbl3 = document.getElementById('lblPred3');
+        
+        if (select === '4') {
+            cupVal.textContent = '280 cup';
+            if (predLine) predLine.setAttribute('points', '374,100 476,75 578,55 670,35');
+            if (predArea) predArea.setAttribute('points', '374,100 476,75 578,55 670,35 670,215 374,215');
+            if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '75'); }
+            if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '55'); }
+            if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '35'); }
+            if (lbl1) { lbl1.setAttribute('y', '65'); lbl1.textContent = '280'; }
+            if (lbl2) { lbl2.setAttribute('y', '45'); lbl2.textContent = '310'; }
+            if (lbl3) { lbl3.setAttribute('y', '25'); lbl3.textContent = '350'; }
+        } else if (select === '3') {
+            cupVal.textContent = '295 cup';
+            if (predLine) predLine.setAttribute('points', '374,100 476,68 578,48 670,30');
+            if (predArea) predArea.setAttribute('points', '374,100 476,68 578,48 670,30 670,215 374,215');
+            if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '68'); }
+            if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '48'); }
+            if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '30'); }
+            if (lbl1) { lbl1.setAttribute('y', '58'); lbl1.textContent = '295'; }
+            if (lbl2) { lbl2.setAttribute('y', '38'); lbl2.textContent = '325'; }
+            if (lbl3) { lbl3.setAttribute('y', '20'); lbl3.textContent = '360'; }
+        } else if (select === '2') {
+            cupVal.textContent = '310 cup';
+            if (predLine) predLine.setAttribute('points', '374,100 476,60 578,40 670,22');
+            if (predArea) predArea.setAttribute('points', '374,100 476,60 578,40 670,22 670,215 374,215');
+            if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '60'); }
+            if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '40'); }
+            if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '22'); }
+            if (lbl1) { lbl1.setAttribute('y', '50'); lbl1.textContent = '310'; }
+            if (lbl2) { lbl2.setAttribute('y', '30'); lbl2.textContent = '340'; }
+            if (lbl3) { lbl3.setAttribute('y', '14'); lbl3.textContent = '375'; }
+        } else {
+            cupVal.textContent = '320 cup';
+            if (predLine) predLine.setAttribute('points', '374,100 476,55 578,35 670,18');
+            if (predArea) predArea.setAttribute('points', '374,100 476,55 578,35 670,18 670,215 374,215');
+            if (dot1) { dot1.setAttribute('cx', '476'); dot1.setAttribute('cy', '55'); }
+            if (dot2) { dot2.setAttribute('cx', '578'); dot2.setAttribute('cy', '35'); }
+            if (dot3) { dot3.setAttribute('cx', '670'); dot3.setAttribute('cy', '18'); }
+            if (lbl1) { lbl1.setAttribute('y', '45'); lbl1.textContent = '320'; }
+            if (lbl2) { lbl2.setAttribute('y', '25'); lbl2.textContent = '350'; }
+            if (lbl3) { lbl3.setAttribute('y', '10'); lbl3.textContent = '390'; }
+        }
     }
 </script>
 @endsection
