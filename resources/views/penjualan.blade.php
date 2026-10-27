@@ -31,9 +31,9 @@
             <div class="flex-1 min-w-[180px]">
                 <label class="block text-xs font-bold text-gray-700 mb-1.5">Pilih Varian Menu</label>
                 <select id="menuSelect" onchange="updatePriceCalculation()" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold text-gray-800 focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none cursor-pointer">
-                    <option value="8000" data-name="Es Teler Original">Es Teler Original - Rp 8.000</option>
-                    <option value="10000" data-name="Es Teler Keju">Es Teler Keju - Rp 10.000</option>
-                    <option value="12000" data-name="Es Teler Keju Special">Es Teler Keju Special - Rp 12.000</option>
+                    @foreach($menus as $menu)
+                        <option value="{{ $menu->id }}" data-price="{{ $menu->harga }}" data-name="{{ $menu->nama_menu }}">{{ $menu->nama_menu }} - Rp {{ number_format($menu->harga, 0, ',', '.') }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -144,7 +144,7 @@
                 <p class="text-xs text-gray-500 mt-0.5">Total harga dihitung otomatis dari jumlah porsi dikalikan harga menu</p>
             </div>
             <div id="summaryBadge" class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-lg border border-emerald-200 shrink-0">
-                Total Hari Ini: 41 Porsi (Rp 416.000)
+                Total Hari Ini: {{ $totalPorsi }} Porsi (Rp {{ number_format($totalPendapatan, 0, ',', '.') }})
             </div>
         </div>
 
@@ -157,50 +157,39 @@
                         <th class="py-3.5 px-6">Nama Menu</th>
                         <th class="py-3.5 px-6 text-center w-32">Jumlah</th>
                         <th class="py-3.5 px-6 text-right w-44">Total Harga</th>
-                        <th class="py-3.5 px-4 text-center w-28">Status</th>
+                        <th class="py-3.5 px-4 text-center w-32">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="salesTableBody" class="divide-y divide-gray-100 text-gray-900">
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3.5 px-4 text-center font-bold text-gray-700">1</td>
-                        <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y') }}</td>
-                        <td class="py-3.5 px-6 font-semibold text-gray-900">Es Teler Keju Special</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="12">12 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="144000">Rp 144.000</td>
-                        <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3.5 px-4 text-center font-bold text-gray-700">2</td>
-                        <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y') }}</td>
-                        <td class="py-3.5 px-6 font-semibold text-gray-900">Es Teler Original</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="8">8 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="64000">Rp 64.000</td>
-                        <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3.5 px-4 text-center font-bold text-gray-700">3</td>
-                        <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y') }}</td>
-                        <td class="py-3.5 px-6 font-semibold text-gray-900">Es Teler Keju</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="10">10 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="100000">Rp 100.000</td>
-                        <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3.5 px-4 text-center font-bold text-gray-700">4</td>
-                        <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y') }}</td>
-                        <td class="py-3.5 px-6 font-semibold text-gray-900">Es Teler Keju Special</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="5">5 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="60000">Rp 60.000</td>
-                        <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3.5 px-4 text-center font-bold text-gray-700">5</td>
-                        <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y') }}</td>
-                        <td class="py-3.5 px-6 font-semibold text-gray-900">Es Teler Original</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="6">6 Porsi</td>
-                        <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="48000">Rp 48.000</td>
-                        <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-                    </tr>
+                    @forelse($penjualanHariIni as $index => $item)
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3.5 px-4 text-center font-bold text-gray-700">{{ $index + 1 }}</td>
+                            <td class="py-3.5 px-4 text-center text-xs font-semibold text-gray-600 date-cell">{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('D MMM Y') }}</td>
+                            <td class="py-3.5 px-6 font-semibold text-gray-900">{{ $item->menu->nama_menu ?? $item->nama_menu }}</td>
+                            <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="{{ $item->jumlah }}">{{ $item->jumlah }} Porsi</td>
+                            <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="{{ $item->total_harga }}">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button onclick="openEditModal({{ $item->id }}, {{ $item->menu_id }}, {{ $item->jumlah }}, '{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}')"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-xs rounded-lg border border-amber-200 transition-colors cursor-pointer"
+                                        title="Edit Transaksi">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        Edit
+                                    </button>
+                                    <button onclick="confirmDelete({{ $item->id }}, this)"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-lg border border-red-200 transition-colors cursor-pointer"
+                                        title="Hapus Transaksi">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr id="emptySalesRow">
+                            <td colspan="6" class="py-8 text-center text-gray-500 font-medium">Belum ada transaksi pada tanggal ini.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -215,6 +204,51 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
         <span id="toastMsg">Transaksi berhasil dicatat!</span>
+    </div>
+</div>
+
+<!-- Modal Edit Transaksi -->
+<div id="editModal" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeEditModal()"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 z-10">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-extrabold text-[#0c3b2e]">Edit Transaksi</h3>
+            <button onclick="closeEditModal()" class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-4">
+            <input type="hidden" id="editId" />
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Varian Menu</label>
+                <select id="editMenuSelect" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold text-gray-800 focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none">
+                    @foreach($menus as $menu)
+                        <option value="{{ $menu->id }}" data-price="{{ $menu->harga }}">{{ $menu->nama_menu }} - Rp {{ number_format($menu->harga, 0, ',', '.') }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Jumlah Porsi</label>
+                <input type="number" id="editQty" min="1" value="1" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none" required />
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Tanggal Transaksi</label>
+                <input type="text" id="editTanggal" placeholder="dd/mm/yyyy" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0c3b2e] focus:outline-none" required />
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-lg transition-colors cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" id="editSubmitBtn" class="flex-1 py-2.5 px-4 bg-[#0c3b2e] hover:bg-[#08281f] text-white font-bold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2">
+                    <span id="editBtnText">Simpan Perubahan</span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -336,7 +370,9 @@
 
     function updatePriceCalculation() {
         const select = document.getElementById('menuSelect');
-        const unitPrice = parseInt(select.value, 10) || 0;
+        if (!select || !select.options || select.selectedIndex < 0) return;
+        const selectedOption = select.options[select.selectedIndex];
+        const unitPrice = selectedOption ? (parseInt(selectedOption.getAttribute('data-price') || selectedOption.value, 10) || 0) : 0;
         const qty = parseInt(document.getElementById('qtyInput').value, 10) || 0;
         const total = unitPrice * qty;
 
@@ -352,7 +388,7 @@
 
     function renumberAndRecalculate() {
         const tbody = document.getElementById('salesTableBody');
-        const rows = tbody.querySelectorAll('tr');
+        const rows = tbody.querySelectorAll('tr:not(#emptySalesRow)');
         let totalPorsi = 0;
         let totalRevenue = 0;
 
@@ -377,47 +413,182 @@
         }
     }
 
-    function handleNewSale(e) {
+    async function handleNewSale(e) {
         e.preventDefault();
         const select = document.getElementById('menuSelect');
-        const menuName = select.options[select.selectedIndex].getAttribute('data-name');
-        const unitPrice = parseInt(select.value, 10);
+        if (!select || select.selectedIndex < 0) return;
+        const selectedOption = select.options[select.selectedIndex];
+        const menuId = select.value;
         const qty = parseInt(document.getElementById('qtyInput').value, 10) || 1;
-        
-        // HITUNGAN OTOMATIS: Jumlah Menu Terjual dikalikan dengan Harganya di Menu
-        const total = unitPrice * qty;
+        const tanggalStr = document.getElementById('penjualanFilterDate').value;
 
-        // Ambil tanggal dari kalender penjualan
-        const tanggalStr = penjualanGetSelectedDateStr();
+        try {
+            const response = await fetch("{{ route('penjualan.store') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    menu_id: menuId,
+                    jumlah: qty,
+                    tanggal: tanggalStr
+                })
+            });
 
-        const tbody = document.getElementById('salesTableBody');
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-gray-50/80 bg-emerald-50/40 transition-colors animate-fade-in";
-        tr.innerHTML = `
-            <td class="py-3.5 px-4 text-center font-bold text-gray-700">1</td>
-            <td class="py-3.5 px-4 text-center text-xs font-semibold text-emerald-800 date-cell">${tanggalStr}</td>
-            <td class="py-3.5 px-6 font-semibold text-gray-900">${menuName}</td>
-            <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="${qty}">${qty} Porsi</td>
-            <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="${total}">${formatRupiah(total)}</td>
-            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded-md">Sukses</span></td>
-        `;
-        tbody.prepend(tr);
+            const result = await response.json();
 
-        renumberAndRecalculate();
-        showToast(`Transaksi ${qty} Porsi ${menuName} (${formatRupiah(total)}) berhasil disimpan!`);
+            if (response.ok && result.success) {
+                const tbody = document.getElementById('salesTableBody');
+                const emptyRow = document.getElementById('emptySalesRow');
+                if (emptyRow) emptyRow.remove();
 
-        document.getElementById('qtyInput').value = 1;
-        updatePriceCalculation();
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50/80 bg-emerald-50/40 transition-colors animate-fade-in";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 text-center font-bold text-gray-700">1</td>
+                    <td class="py-3.5 px-4 text-center text-xs font-semibold text-emerald-800 date-cell">${result.data.tanggal_formatted}</td>
+                    <td class="py-3.5 px-6 font-semibold text-gray-900">${result.data.nama_menu}</td>
+                    <td class="py-3.5 px-6 text-center font-bold text-gray-800" data-qty="${result.data.jumlah}">${result.data.jumlah} Porsi</td>
+                    <td class="py-3.5 px-6 text-right font-extrabold text-[#0c3b2e]" data-total="${result.data.total_harga}">${result.data.total_harga_formatted}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openEditModal(${result.data.id}, ${result.data.menu_id}, ${result.data.jumlah}, '${result.data.tanggal_dmY}')"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-xs rounded-lg border border-amber-200 transition-colors cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                Edit
+                            </button>
+                            <button onclick="confirmDelete(${result.data.id}, this)"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-lg border border-red-200 transition-colors cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Hapus
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.prepend(tr);
+
+                renumberAndRecalculate();
+                showToast(result.message);
+
+                document.getElementById('qtyInput').value = 1;
+                updatePriceCalculation();
+            } else {
+                alert(result.message || 'Gagal menyimpan transaksi.');
+            }
+        } catch (err) {
+            alert('Terjadi kesalahan koneksi.');
+        }
+    }
+
+    // =============================================
+    // EDIT & DELETE
+    // =============================================
+    let currentEditRow = null;
+
+    function openEditModal(id, menuId, jumlah, tanggal) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editQty').value = jumlah;
+        document.getElementById('editTanggal').value = tanggal;
+
+        const select = document.getElementById('editMenuSelect');
+        for (let i = 0; i < select.options.length; i++) {
+            if (parseInt(select.options[i].value) === parseInt(menuId)) {
+                select.selectedIndex = i;
+                break;
+            }
+        }
+
+        document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+        currentEditRow = null;
+    }
+
+    async function handleEditSubmit(e) {
+        e.preventDefault();
+        const id      = document.getElementById('editId').value;
+        const menuId  = document.getElementById('editMenuSelect').value;
+        const jumlah  = document.getElementById('editQty').value;
+        const tanggal = document.getElementById('editTanggal').value;
+
+        const btn     = document.getElementById('editSubmitBtn');
+        const btnText = document.getElementById('editBtnText');
+        btn.disabled  = true;
+        btnText.textContent = 'Menyimpan...';
+
+        try {
+            const response = await fetch(`/data-penjualan/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ menu_id: menuId, jumlah: jumlah, tanggal: tanggal })
+            });
+
+            const result = await response.json();
+            btn.disabled = false;
+            btnText.textContent = 'Simpan Perubahan';
+
+            if (response.ok && result.success) {
+                closeEditModal();
+                showToast(result.message);
+                // Reload halaman agar data terbaru tampil
+                setTimeout(() => window.location.reload(), 800);
+            } else {
+                alert(result.message || 'Gagal memperbarui transaksi.');
+            }
+        } catch (err) {
+            btn.disabled = false;
+            btnText.textContent = 'Simpan Perubahan';
+            alert('Terjadi kesalahan koneksi.');
+        }
+    }
+
+    async function confirmDelete(id, btn) {
+        if (!confirm('Yakin ingin menghapus transaksi ini?')) return;
+
+        const row = btn.closest('tr');
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            const response = await fetch(`/data-penjualan/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                row.remove();
+                const tbody = document.getElementById('salesTableBody');
+                if (tbody.querySelectorAll('tr:not(#emptySalesRow)').length === 0) {
+                    tbody.innerHTML = `<tr id="emptySalesRow"><td colspan="6" class="py-8 text-center text-gray-500 font-medium">Belum ada transaksi pada tanggal ini.</td></tr>`;
+                }
+                renumberAndRecalculate();
+                showToast(result.message);
+            } else {
+                btn.disabled = false;
+                alert(result.message || 'Gagal menghapus transaksi.');
+            }
+        } catch (err) {
+            btn.disabled = false;
+            alert('Terjadi kesalahan koneksi.');
+        }
     }
 
     // Inisialisasi saat halaman dimuat
     document.addEventListener('DOMContentLoaded', () => {
         penjualanSelectToday();
-
-        const currentDate = getRealtimeDateString();
-        document.querySelectorAll('.date-cell').forEach(cell => {
-            cell.textContent = currentDate;
-        });
         updatePriceCalculation();
         renumberAndRecalculate();
     });

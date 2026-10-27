@@ -191,11 +191,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                     </div>
-                    <span class="font-bold text-sm text-gray-800">Admin</span>
+                    <span class="font-bold text-sm text-gray-800">{{ Auth::user()->name ?? 'Admin' }}</span>
                 </div>
 
                 <!-- Log Out Button -->
-                <a href="{{ route('login') }}" 
+                <a href="{{ route('logout') }}" 
                    class="px-3.5 sm:px-4 py-1.5 bg-[#e2e8f0] hover:bg-[#cbd5e1] active:bg-[#94a3b8] text-gray-800 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 shadow-xs cursor-pointer">
                     Log Out
                 </a>

@@ -187,41 +187,19 @@
                 </thead>
                 <!-- Rows with grid lines -->
                 <tbody id="tableBody" class="text-sm sm:text-base text-gray-900 divide-y divide-gray-300">
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">12</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 300.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">8</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 280.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 450.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 150.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 168.000</td>
-                    </tr>
+                    @forelse($laporan as $index => $item)
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3 px-4 text-center font-bold border-r border-gray-300">{{ $index + 1 }}</td>
+                            <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('D MMM Y') }}</td>
+                            <td class="py-3 px-6 text-left font-bold border-r border-gray-300">{{ $item->menu->nama_menu ?? $item->nama_menu ?? 'Es Teler' }}</td>
+                            <td class="py-3 px-6 text-center font-bold border-r border-gray-300">{{ $item->jumlah }}</td>
+                            <td class="py-3 px-6 text-left font-bold text-black">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-gray-500 font-medium">Tidak ada transaksi penjualan pada periode ini.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -263,7 +241,7 @@
                 Total Pendapatan (Periode Dipilih)
             </p>
             <h3 id="totalRevenueText" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-black tracking-tight mt-1">
-                Rp 1.348.000
+                Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
             </h3>
         </div>
 
@@ -430,162 +408,44 @@
         applyFilter();
     }
 
-    function applyFilter() {
+    async function applyFilter() {
         const totalText = document.getElementById('totalRevenueText');
         const tbody = document.getElementById('tableBody');
-        const dateStr = `${selectedDay} ${monthShortIndo[selectedMonth]} ${selectedYear}`;
+        const dd = String(selectedDay).padStart(2, '0');
+        const mm = String(selectedMonth + 1).padStart(2, '0');
+        const dateParam = `${dd}/${mm}/${selectedYear}`;
 
-        if (currentPeriod === 'harian') {
-            if (selectedDay === 27 && selectedMonth === 8 && selectedYear === 2026) {
-                totalText.textContent = 'Rp 1.348.000';
-                tbody.innerHTML = `
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">12</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 300.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">8</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 280.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 450.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 150.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">27 Sep 2026</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 168.000</td>
-                    </tr>
-                `;
-            } else {
-                totalText.textContent = 'Rp 1.145.000';
-                tbody.innerHTML = `
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">10</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 250.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Original</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">9</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 315.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Reguler</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">6</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 270.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Spesial Buah</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 140.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                        <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${dateStr}</td>
-                        <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Durian Monthong</td>
-                        <td class="py-3 px-6 text-center font-bold border-r border-gray-300">4</td>
-                        <td class="py-3 px-6 text-left font-bold text-black">Rp 170.000</td>
-                    </tr>
-                `;
+        try {
+            const url = `{{ route('laporan.data') }}?periode=${currentPeriod}&tanggal=${encodeURIComponent(dateParam)}`;
+            const response = await fetch(url, {
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                totalText.textContent = result.totalPendapatanFormatted;
+
+                if (result.data && result.data.length > 0) {
+                    tbody.innerHTML = result.data.map(item => `
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3 px-4 text-center font-bold border-r border-gray-300">${item.no}</td>
+                            <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">${item.tanggal}</td>
+                            <td class="py-3 px-6 text-left font-bold border-r border-gray-300">${item.nama_menu}</td>
+                            <td class="py-3 px-6 text-center font-bold border-r border-gray-300">${item.jumlah}</td>
+                            <td class="py-3 px-6 text-left font-bold text-black">${item.total_harga_formatted}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-gray-500 font-medium">Tidak ada transaksi penjualan pada periode ini.</td>
+                        </tr>
+                    `;
+                }
             }
-        } else if (currentPeriod === 'mingguan') {
-            totalText.textContent = 'Rp 9.436.000';
-            tbody.innerHTML = `
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Spesial</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">92</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 2.300.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Original</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">65</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 2.275.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Keju Reguler</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">68</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 3.060.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Spesial Buah</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">41</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 1.148.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">5</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">21 - 27 Sep 2026</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Es Teler Durian</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">22</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 653.000</td>
-                </tr>
-            `;
-        } else if (currentPeriod === 'bulanan') {
-            totalText.textContent = 'Rp 38.850.000';
-            tbody.innerHTML = `
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">1</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 1)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">260</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.100.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">2</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 2)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">285</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.975.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">3</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 3)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">295</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 10.339.000</td>
-                </tr>
-                <tr class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 text-center font-bold border-r border-gray-300">4</td>
-                    <td class="py-3 px-6 text-left border-r border-gray-300 whitespace-nowrap font-medium">Sep 2026 (Minggu 4)</td>
-                    <td class="py-3 px-6 text-left font-bold border-r border-gray-300">Semua Varian Menu</td>
-                    <td class="py-3 px-6 text-center font-bold border-r border-gray-300">270</td>
-                    <td class="py-3 px-6 text-left font-bold text-black">Rp 9.436.000</td>
-                </tr>
-            `;
+        } catch (e) {
+            console.error('Error in applyFilter:', e);
         }
     }
 
